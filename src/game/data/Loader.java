@@ -21,7 +21,6 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
 import game.Main;
-import game.map.Block;
 import game.map.Map;
 import game.model.RawModel;
 import game.model.TexturedModel;
@@ -36,7 +35,6 @@ public class Loader {
 
 	public RawModel loadRawModel(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
 		int vaoID = createVAO();
-		GL30.glBindVertexArray(vaoID);
 		bindIndicesBuffer(indices);
 		storeDataInVBO(0, 3, positions);
 		storeDataInVBO(1, 2, textureCoords);
@@ -78,6 +76,7 @@ public class Loader {
 	private int createVAO() {
 		int vaoID = GL30.glGenVertexArrays();
 		vaos.add(vaoID);
+		GL30.glBindVertexArray(vaoID);
 		return vaoID;
 	}
 
@@ -100,7 +99,6 @@ public class Loader {
 	}
 
 	public Map loadMap(String filename) {
-		System.out.println("Loading map '" + filename + "'.");
 		Map map = new Map();
 		try {
 			BufferedReader br = new BufferedReader(new FileReader("res/maps/" + filename + ".obj"));
@@ -113,8 +111,8 @@ public class Loader {
 			while ((line = br.readLine()) != null) {
 				if (line.startsWith("#")) continue;
 				if (line.startsWith("o")) {
-					Block b = new Block();
 
+					TexturedModel b = new TexturedModel();
 					String textureName = "";
 					int faceCount = 0;
 					int vCount = 0;
@@ -134,6 +132,8 @@ public class Loader {
 
 					while (true) {
 						line = br.readLine();
+						if(line == null)
+							break;
 						String[] t = line.split(" ");
 						if (t[0].equals("v")) {
 							Vector3f vertex = new Vector3f();
@@ -158,6 +158,7 @@ public class Loader {
 							normals.add(normal);
 							vnCount++;
 						}
+
 						if (t[0].equals("usemtl")) {
 							textureName = t[1];
 						}
@@ -174,7 +175,6 @@ public class Loader {
 								int indice = Integer.parseInt(tx[0]) - vertexOffset;
 								b.calculateBounds(vertices.get(indice));
 								indices.add(indice);
-
 								Vector2f texture = textures.get(Integer.parseInt(tx[1]) - textureOffset);
 								textureArray[indice * 2    ] = texture.getX();
 								textureArray[indice * 2 + 1] = texture.getY();
@@ -204,8 +204,9 @@ public class Loader {
 
 					RawModel rawModel = loadRawModel(vertexArray, textureArray, normalArray, indiceArray);
 					ModelTexture modelTexture = new ModelTexture(TextureMaterialTools.fetchMaterial(textureName), loadTexture(textureName));
-					b.setModel(new TexturedModel(rawModel, modelTexture));
-					map.getBlockArray().add(b);
+					b.setRawModel(rawModel);
+					b.setTexture(modelTexture);
+					map.getTexturedModelsArray().add(b);
 
 					vertexOffset += vCount;
 					textureOffset += vtCount;

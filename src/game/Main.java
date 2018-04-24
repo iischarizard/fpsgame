@@ -10,7 +10,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		try {
-			Display.setDisplayMode(new DisplayMode(1920, 1080));
+			Display.setDisplayMode(new DisplayMode(1280, 720));
 			Display.create();
 		}
 		catch (LWJGLException e) {

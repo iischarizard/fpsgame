@@ -12,7 +12,6 @@ import org.lwjgl.util.vector.Vector3f;
 
 import game.entity.Entity;
 import game.entity.Player;
-import game.map.Block;
 import game.model.TexturedModel;
 
 public class RenderMaster {
@@ -28,7 +27,7 @@ public class RenderMaster {
 	private BlockRenderer blockRenderer;
 
 	private Map<TexturedModel, List<Entity>> entities;
-	private Map<Integer, List<Block>> blocks;
+	private Map<Integer, List<TexturedModel>> blocks;
 
 	public RenderMaster() {
 		createProjectionMatrix();
@@ -37,7 +36,7 @@ public class RenderMaster {
 		blockRenderer = new BlockRenderer(projectionMatrix);
 
 		entities = new HashMap<TexturedModel, List<Entity>>();
-		blocks = new HashMap<Integer, List<Block>>();
+		blocks = new HashMap<Integer, List<TexturedModel>>();
 	}
 
 	public void render(Player camera) {
@@ -64,15 +63,15 @@ public class RenderMaster {
 		}
 	}
 
-	public void processBlock(Block block) {
-		int texture = block.getModel().getTexture().getID();
-		List<Block> batch = blocks.get(texture);
+	public void processBlock(TexturedModel model) {
+		int texture = model.getTexture().getID();
+		List<TexturedModel> batch = blocks.get(texture);
 		if (batch != null) {
-			batch.add(block);
+			batch.add(model);
 		}
 		else {
-			List<Block> newBatch = new ArrayList<Block>();
-			newBatch.add(block);
+			List<TexturedModel> newBatch = new ArrayList<TexturedModel>();
+			newBatch.add(model);
 			blocks.put(texture, newBatch);
 		}
 	}

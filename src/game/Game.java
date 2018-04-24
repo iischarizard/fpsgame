@@ -1,13 +1,15 @@
 package game;
 
+import game.model.TexturedModel;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import game.data.Loader;
 import game.entity.Player;
-import game.map.Block;
 import game.map.Map;
 import game.render.RenderMaster;
+
+import static org.lwjgl.opengl.GL11.*;
 
 public class Game implements GameBase {
 	private boolean running = false;
@@ -19,7 +21,7 @@ public class Game implements GameBase {
 	public void init() {
 		renderMaster = new RenderMaster();
 		loader = new Loader();
-		map = loader.loadMap("map01");
+		map = loader.loadMap("map02");
 		player = new Player(map);
 	}
 
@@ -27,7 +29,7 @@ public class Game implements GameBase {
 		GL11.glClearColor(0.529f, 0.808f, 0.980f, 1.0f);
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glEnable(GL11.GL_CULL_FACE);
+		//GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glCullFace(GL11.GL_BACK);
 	}
 
@@ -43,8 +45,8 @@ public class Game implements GameBase {
 	}
 
 	public void render() {
-		for (Block block : map.getBlockArray())
-			renderMaster.processBlock(block);
+		for (TexturedModel model : map.getTexturedModelsArray())
+			renderMaster.processBlock(model);
 		renderMaster.render(player);
 	}
 	public void stop(){
@@ -57,5 +59,27 @@ public class Game implements GameBase {
 		renderMaster.cleanUp();
 		Display.destroy();
 	}
+	public static void make2D() {
+		//Remove the Z axis
+		GL11.glDisable(GL11.GL_LIGHTING);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glPushMatrix();
+		GL11.glOrtho(0, Display.getWidth(), 0, Display.getHeight(), 0, 1);
+		GL11.glLoadIdentity();
 
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glPushMatrix();
+		GL11.glLoadIdentity();
+	}
+
+	public static void make3D() {
+		//Restore the Z axis
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glPopMatrix();
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glPopMatrix();
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glEnable(GL11.GL_LIGHTING);
+	}
 }

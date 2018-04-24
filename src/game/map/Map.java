@@ -1,16 +1,18 @@
 package game.map;
 
+import game.model.TexturedModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class Map {
 
-	private List<Block> blocks;
+	private List<TexturedModel> texturedModels;
 
 
 	public Map() {
-		blocks = new ArrayList<Block>();
+		texturedModels = new ArrayList<TexturedModel>();
 
 	}
 
@@ -18,9 +20,9 @@ public class Map {
 
 	}
 
-	public List<Block> getBlockArray()
+	public List<TexturedModel> getTexturedModelsArray()
 	{
-		return blocks;
+		return texturedModels;
 	}
 
 }

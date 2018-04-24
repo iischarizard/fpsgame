@@ -1,11 +1,14 @@
 package game.entity;
 
+import game.Game;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
-import game.map.Block;
+import game.model.Bounds;
 import game.map.Map;
+
+import java.util.ArrayList;
 
 public class Player {
 
@@ -16,9 +19,9 @@ public class Player {
 	private float dy, groundHeight;
 
 	// Bounds
-	private float width;
-	private float height;
-	private float length;
+	public static float width = 2;
+	public static float height = 4;
+	public static float length = 2;
 
 	private boolean onGround;
 	private boolean running;
@@ -30,6 +33,7 @@ public class Player {
 	private float gravity;
 	private float jumpForce;
 
+	private ArrayList<Bullet> bullets = new ArrayList <>();
 	private Map map;
 
 	public Player(Map map) {
@@ -39,15 +43,10 @@ public class Player {
 		previous = new Vector3f(0, 35, 0);
 		rotation = new Vector3f(0, 0, 0);
 
-		width = 1;
-		height = 4;
-		length = 1;
-
-		runSpeed = 20.0f;
-		walkSpeed = 12.0f;
+		runSpeed = 30.0f;
+		walkSpeed = 15.0f;
 		gravity = 0.625f;
-		jumpForce = 30.0f;
-
+		jumpForce = 50.0f;
 
 		calcGroundHeight();
 	}
@@ -65,7 +64,16 @@ public class Player {
 
 		}
 		verticalMovement(dt);
-
+		ArrayList<Bullet> removeBullets = new ArrayList <>();
+		for(Bullet b : bullets){
+			b.move();
+			if(b.collides(map.getTexturedModelsArray()))
+				removeBullets.add(b);
+			System.out.println(b.getPosition());
+		}
+		for(Bullet collidedBullets : removeBullets){
+			bullets.remove(collidedBullets);
+		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
 			position.set(0.0f, 35.0f, 0.0f);
@@ -74,8 +82,10 @@ public class Player {
 			dy = 0.0f;
 		}
 
-		if (Mouse.isButtonDown(0) && !Mouse.isGrabbed()) Mouse.setGrabbed(true);
-		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && Mouse.isGrabbed()) Mouse.setGrabbed(false);
+		if (Keyboard.isKeyDown(Keyboard.KEY_L) && !Mouse.isGrabbed())
+			Mouse.setGrabbed(true);
+		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && Mouse.isGrabbed())
+			Mouse.setGrabbed(false);
 
 		boolean moved = false;
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
@@ -122,7 +132,6 @@ public class Player {
 			moved = true;
 		}
 
-		Vector3f prevRot = new Vector3f(rotation);
 		if (Mouse.isGrabbed()) {
 			rotation.y += (float) Mouse.getDX() * 7.25f * dt;
 			rotation.x -= (float) Mouse.getDY() * 7.25f * dt;
@@ -130,10 +139,13 @@ public class Player {
 			else if (rotation.x > 90) rotation.x = 90;
 		}
 
+		if (Mouse.isButtonDown(0)){
+			bullets.add(new Bullet(position.x,position.y,position.z,speed,rotation.y,rotation.x));
+		}
+
 		if (moved) {
 			calcGroundHeight();
 		}
-
 	}
 
 	private void verticalMovement(float dt) {
@@ -167,7 +179,7 @@ public class Player {
 
 	private void calcGroundHeight() {
 		groundHeight = Float.NEGATIVE_INFINITY;
-		for (Block b : map.getBlockArray()) {
+		for (Bounds b : map.getTexturedModelsArray()) {
 			if ((position.x <= b.getMaxX() && position.x + width >= b.getMinX()) && //
 					(position.y >= b.getMaxY() && groundHeight <= b.getMaxY()) && //
 					(position.z <= b.getMaxZ() && position.z + length >= b.getMinZ())) {
@@ -181,7 +193,7 @@ public class Player {
 	}
 
 	private boolean collides() {
-		for (Block b : map.getBlockArray()) {
+		for (Bounds b : map.getTexturedModelsArray()) {
 			if ((position.x <= b.getMaxX() && position.x + width >= b.getMinX()) && //
 					(position.y < b.getMaxY() && position.y + height >= b.getMinY()) && //
 					(position.z <= b.getMaxZ() && position.z + length >= b.getMinZ())) //
@@ -189,7 +201,9 @@ public class Player {
 		}
 		return false;
 	}
-
+	public Map getMap(){
+		return map;
+	}
 	public Vector3f getPosition() {
 		return position;
 	}
