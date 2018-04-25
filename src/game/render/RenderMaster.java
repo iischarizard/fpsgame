@@ -42,10 +42,8 @@ public class RenderMaster {
 	public void render(Player camera) {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		createViewMatrix(camera);
-
-		entityRenderer.render(viewMatrix, entities);
 		blockRenderer.render(viewMatrix, blocks);
-
+		entityRenderer.render(viewMatrix, entities);
 		entities.clear();
 		blocks.clear();
 	}

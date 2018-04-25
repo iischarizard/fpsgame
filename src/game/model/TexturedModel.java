@@ -22,16 +22,25 @@ public class TexturedModel extends Bounds{
 	public Vector3f getPosition(){
 		return position;
 	}
+
+	public void setPosition(Vector3f newPos){this.position = newPos;}
+
 	public void setHit(boolean x){
 		isHit = x;
 	}
+
 	public void setRawModel(RawModel rawModel) {
 		this.rawModel = rawModel;
+	}
+
+	public boolean getHit(){
+		return isHit;
 	}
 
 	public void setTexture(ModelTexture texture) {
 		this.texture = texture;
 	}
+
 
 	public RawModel getRawModel() {
 		return rawModel;

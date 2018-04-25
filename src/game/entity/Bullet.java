@@ -8,24 +8,30 @@ import java.util.List;
  */
 public class Bullet {
     private Vector3f position;
+    private Vector3f direction;
     private float yRotation;
     private float xRotation;
     private float speed;
 
+
+
     public Bullet(float x, float y, float z,float speed,float rotationY, float rotationX){
         position = new Vector3f(x,y,z);
+        direction = new Vector3f();
         this.speed = speed;
         this.yRotation = rotationY;
         this.xRotation = rotationX;
-
-//        System.out.println(rotationX);
-//        System.out.println(rotationY);
+        direction.x = (float)Math.cos(Math.toRadians(yRotation + 90));
+        direction.z = (float)Math.sin(Math.toRadians(yRotation + 90));
+        direction.y = (float)Math.cos(Math.toRadians(xRotation + 90));
+        System.out.println(direction);
     }
     public void move(){
-        System.out.println(Math.sin(Math.toRadians(xRotation)) * speed*5);
+
         position.x += Math.sin(Math.toRadians(yRotation)) * speed*5;
         position.z -= Math.cos(Math.toRadians(yRotation)) * speed*5;
-        position.y -= Math.sin(Math.toRadians(xRotation)) * speed*5;
+        position.y -= Math.sin(Math.toRadians(xRotation)) * speed;
+        System.out.println(position);
     }
     public boolean collides(List<TexturedModel> texturedArray){
         for (TexturedModel b : texturedArray) {
@@ -33,7 +39,7 @@ public class Bullet {
                     (position.y < b.getMaxY() && position.y >= b.getMinY()) && //
                     (position.z <= b.getMaxZ() && position.z >= b.getMinZ())) {
                 b.setHit(true);
-                System.out.println(b.getTexture().getMaterial());
+                //System.out.println(b.getTexture().getMaterial());
                 return true;
             }
         }

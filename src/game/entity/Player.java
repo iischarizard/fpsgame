@@ -64,12 +64,13 @@ public class Player {
 
 		}
 		verticalMovement(dt);
+//		/System.out.println(position);
 		ArrayList<Bullet> removeBullets = new ArrayList <>();
 		for(Bullet b : bullets){
 			b.move();
 			if(b.collides(map.getTexturedModelsArray()))
 				removeBullets.add(b);
-			System.out.println(b.getPosition());
+			//System.out.println(b.getPosition());
 		}
 		for(Bullet collidedBullets : removeBullets){
 			bullets.remove(collidedBullets);
@@ -131,7 +132,7 @@ public class Player {
 			onGround = false;
 			moved = true;
 		}
-
+//		/Mouse.setCursorPosition(1280/2,720/2);
 		if (Mouse.isGrabbed()) {
 			rotation.y += (float) Mouse.getDX() * 7.25f * dt;
 			rotation.x -= (float) Mouse.getDY() * 7.25f * dt;
@@ -140,6 +141,7 @@ public class Player {
 		}
 
 		if (Mouse.isButtonDown(0)){
+			System.out.println("PLAYER POS: "+position);
 			bullets.add(new Bullet(position.x,position.y,position.z,speed,rotation.y,rotation.x));
 		}
 

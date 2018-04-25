@@ -1,5 +1,6 @@
 package game.render;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,20 +28,23 @@ public class BlockRenderer {
 	public void render(Matrix4f viewMatrix, Map<Integer, List<TexturedModel>> textModels) {
 		shader.start();
 		shader.loadViewMatrix(viewMatrix);
+		ArrayList<TexturedModel> remove =  new ArrayList <>();
 		for (int textureID : textModels.keySet()) {
 			bindTexture(textureID);
 			List<TexturedModel> batch = textModels.get(textureID);
 			for (TexturedModel text : batch) {
-				RawModel model = text.getRawModel();
-				GL30.glBindVertexArray(model.getVaoID());
-				GL20.glEnableVertexAttribArray(0);
-				GL20.glEnableVertexAttribArray(1);
-				GL13.glActiveTexture(GL13.GL_TEXTURE0);
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
-				GL11.glDrawElements(GL11.GL_TRIANGLES,model.getVertexCount(),GL11.GL_UNSIGNED_INT,0);
-				GL20.glDisableVertexAttribArray(0);
-				GL20.glDisableVertexAttribArray(1);
-				GL30.glBindVertexArray(0);
+				if(!text.getHit()) {
+					RawModel model = text.getRawModel();
+					GL30.glBindVertexArray(model.getVaoID());
+					GL20.glEnableVertexAttribArray(0);
+					GL20.glEnableVertexAttribArray(1);
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
+					GL11.glDrawElements(GL11.GL_TRIANGLES, model.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+					GL20.glDisableVertexAttribArray(0);
+					GL20.glDisableVertexAttribArray(1);
+					GL30.glBindVertexArray(0);
+				}
 			}
 		}
 		unbindModel();
