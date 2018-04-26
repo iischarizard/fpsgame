@@ -1,7 +1,8 @@
 package game.model;
 
+import org.lwjgl.util.vector.Vector3f;
+
 import game.texture.ModelTexture;
-import org.joml.Vector3f;
 
 public class TexturedModel extends Bounds{
 

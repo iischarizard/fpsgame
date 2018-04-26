@@ -34,7 +34,7 @@ public class Main {
 			game.render();
 
 			Display.update();
-			Display.sync(144);
+			Display.sync(60);
 		}
 		game.cleanUp();
 	}

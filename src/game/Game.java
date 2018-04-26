@@ -9,7 +9,6 @@ import game.entity.Player;
 import game.map.Map;
 import game.render.RenderMaster;
 
-import static org.lwjgl.opengl.GL11.*;
 
 public class Game implements GameBase {
 	private boolean running = false;
@@ -30,7 +29,9 @@ public class Game implements GameBase {
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		//GL11.glEnable(GL11.GL_CULL_FACE);
-		GL11.glCullFace(GL11.GL_BACK);
+		GL11.glCullFace(GL11.GL_BACK);    
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	public void update(float dt) {
@@ -45,8 +46,9 @@ public class Game implements GameBase {
 	}
 
 	public void render() {
-		for (TexturedModel model : map.getTexturedModelsArray())
+		for (TexturedModel model : map.getTexturedModelsArray()){
 			renderMaster.processBlock(model);
+		}
 		renderMaster.render(player);
 	}
 	public void stop(){

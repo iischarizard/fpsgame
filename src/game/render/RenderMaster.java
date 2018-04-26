@@ -25,6 +25,7 @@ public class RenderMaster {
 
 	private EntityRenderer entityRenderer;
 	private BlockRenderer blockRenderer;
+	private HudRenderer hudRenderer;
 
 	private Map<TexturedModel, List<Entity>> entities;
 	private Map<Integer, List<TexturedModel>> blocks;
@@ -34,7 +35,8 @@ public class RenderMaster {
 
 		entityRenderer = new EntityRenderer(projectionMatrix);
 		blockRenderer = new BlockRenderer(projectionMatrix);
-
+		hudRenderer = new HudRenderer();
+		
 		entities = new HashMap<TexturedModel, List<Entity>>();
 		blocks = new HashMap<Integer, List<TexturedModel>>();
 	}
@@ -46,6 +48,7 @@ public class RenderMaster {
 		entityRenderer.render(viewMatrix, entities);
 		entities.clear();
 		blocks.clear();
+		hudRenderer.render();
 	}
 
 	public void processEntity(Entity entity) {
