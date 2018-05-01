@@ -1,6 +1,7 @@
 package game.entity;
 
 import game.Game;
+import game.data.SoundEffects;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
@@ -35,6 +36,7 @@ public class Player {
 
 	private ArrayList<Bullet> bullets = new ArrayList <>();
 	private Map map;
+	private SoundEffects sfx = new SoundEffects();
 
 	public Player(Map map) {
 		this.map = map;
@@ -47,6 +49,9 @@ public class Player {
 		walkSpeed = 15.0f;
 		gravity = 0.625f;
 		jumpForce = 20.0f;
+
+		String[] sfxnoises = {"res/sfx/pistol.wav"};
+		sfx.loadSongs(sfxnoises);
 
 		calcGroundHeight();
 	}
@@ -141,11 +146,12 @@ public class Player {
 			else if (rotation.x > 90)
 				rotation.x = 90;
 		}
-		System.out.println(rotation);
+		//System.out.println(rotation);
 
 		if (Mouse.isButtonDown(0)){
-			System.out.println("PLAYER POS: "+position);
-			bullets.add(new Bullet(position.x,position.y,position.z,speed,rotation.y,rotation.x));
+			//System.out.println("PLAYER POS: "+position);
+			bullets.add(new Bullet(position.x,position.y+4,position.z,speed,rotation.y,rotation.x));
+			sfx.playFile(0);
 		}
 
 		if (moved) {
