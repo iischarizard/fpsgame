@@ -16,7 +16,7 @@ public class Bullet {
 
 
     public Bullet(float x, float y, float z,float speed,float rotationY, float rotationX){
-        position = new Vector3f(x,y+4,z);
+        position = new Vector3f(x,y,z);
         direction = new Vector3f();
         this.speed = speed;
         this.yRotation = rotationY;

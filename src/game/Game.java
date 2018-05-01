@@ -1,16 +1,16 @@
 package game;
 
-import game.data.AudioControls;
-import game.model.TexturedModel;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.openal.SoundStore;
 
 import game.data.Loader;
+import game.data.Radio;
 import game.entity.Player;
 import game.map.Map;
+import game.model.TexturedModel;
 import game.render.RenderMaster;
-import org.newdawn.slick.openal.SoundStore;
 
 
 public class Game implements GameBase {
@@ -19,7 +19,7 @@ public class Game implements GameBase {
 	private Loader loader;
 	private Map map;
 	private Player player;
-	private AudioControls radio = new AudioControls();
+	private Radio radio = new Radio();
 
 	public void init() {
 		renderMaster = new RenderMaster();
@@ -46,10 +46,10 @@ public class Game implements GameBase {
 			if (Keyboard.getEventKeyState()) {
 				if (Keyboard.isKeyDown(Keyboard.KEY_MINUS)) {
 					//System.out.println(1);
-					radio.playSong(-1);
+					radio.playFile(-1);
 				}
 				if (Keyboard.isKeyDown(Keyboard.KEY_EQUALS)) {
-					radio.playSong(1);
+					radio.playFile(1);
 				}
 			}
 		}

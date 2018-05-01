@@ -148,12 +148,15 @@ public class Player {
 		}
 		//System.out.println(rotation);
 
-		if (Mouse.isButtonDown(0)){
-			//System.out.println("PLAYER POS: "+position);
-			bullets.add(new Bullet(position.x,position.y+4,position.z,speed,rotation.y,rotation.x));
-			sfx.playFile(0);
+		while(Mouse.next()) {
+			if (Mouse.getEventButtonState()) {
+				if (Mouse.isButtonDown(0)){
+					//System.out.println("PLAYER POS: "+position);
+					bullets.add(new Bullet(position.x,position.y+4,position.z,speed,rotation.y,rotation.x));
+					sfx.playFile(0);
+				}	
+			}
 		}
-
 		if (moved) {
 			calcGroundHeight();
 		}
