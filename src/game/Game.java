@@ -1,6 +1,8 @@
 package game;
 
+import game.data.AudioControls;
 import game.model.TexturedModel;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
@@ -8,6 +10,7 @@ import game.data.Loader;
 import game.entity.Player;
 import game.map.Map;
 import game.render.RenderMaster;
+import org.newdawn.slick.openal.SoundStore;
 
 
 public class Game implements GameBase {
@@ -16,12 +19,15 @@ public class Game implements GameBase {
 	private Loader loader;
 	private Map map;
 	private Player player;
+	private AudioControls radio = new AudioControls();
 
 	public void init() {
 		renderMaster = new RenderMaster();
 		loader = new Loader();
-		map = loader.loadMap("map02");
+		map = loader.loadMap("map01");
 		player = new Player(map);
+		String[] s = {"res/songs/WhatIsLove.wav","res/songs/Ho.wav","res/songs/Stuck.wav","res/songs/Dejavu.wav","res/songs/SweetTalker.wav"};
+		radio.loadSongs(s);
 	}
 
 	public void initGL() {
@@ -36,6 +42,18 @@ public class Game implements GameBase {
 
 	public void update(float dt) {
 		player.update(dt);
+		while(Keyboard.next()) {
+			if (Keyboard.getEventKeyState()) {
+				if (Keyboard.isKeyDown(Keyboard.KEY_MINUS)) {
+					//System.out.println(1);
+					radio.playSong(-1);
+				}
+				if (Keyboard.isKeyDown(Keyboard.KEY_EQUALS)) {
+					radio.playSong(1);
+				}
+			}
+		}
+		SoundStore.get().poll(0);
 	}
 	public boolean isRunning() {
 		return running;
