@@ -37,6 +37,7 @@ public class Player {
 	private ArrayList<Bullet> bullets = new ArrayList <>();
 	private Map map;
 	private SoundEffects sfx = new SoundEffects();
+	private float bulletSpeed = 200f;
 
 	public Player(Map map) {
 		this.map = map;
@@ -58,13 +59,13 @@ public class Player {
 
 	public void update(float dt) {
 
+		boolean moved = false;
 		running = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
 		if(running){
 			speed = runSpeed * dt;
 		}else{
 			speed = walkSpeed * dt;
 		}
-
 		if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)){
 
 		}
@@ -73,8 +74,9 @@ public class Player {
 		ArrayList<Bullet> removeBullets = new ArrayList <>();
 		for(Bullet b : bullets){
 			b.move();
-			if(b.collides(map.getTexturedModelsArray()))
+			if(b.collides(map.getTexturedModelsArray())){
 				removeBullets.add(b);
+			}
 			//System.out.println(b.getPosition());
 		}
 		for(Bullet collidedBullets : removeBullets){
@@ -93,7 +95,6 @@ public class Player {
 		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && Mouse.isGrabbed())
 			Mouse.setGrabbed(false);
 
-		boolean moved = false;
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			previous.setX(position.getX());
 			position.x += Math.sin(Math.toRadians(rotation.y)) * speed;
@@ -152,14 +153,15 @@ public class Player {
 			if (Mouse.getEventButtonState()) {
 				if (Mouse.isButtonDown(0)){
 					//System.out.println("PLAYER POS: "+position);
-					bullets.add(new Bullet(position.x,position.y+4,position.z,speed,rotation.y,rotation.x));
+					
+					bullets.add(new Bullet(position.x,position.y+4,position.z,bulletSpeed * dt,rotation.y,rotation.x));
 					sfx.playFile(0);
 				}	
 			}
 		}
-		if (moved) {
+		//if (moved) {
 			calcGroundHeight();
-		}
+		//}
 	}
 
 	private void verticalMovement(float dt) {

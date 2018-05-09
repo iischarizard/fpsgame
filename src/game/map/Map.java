@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Map {
 
-	private List<TexturedModel> texturedModels;
+	private ArrayList<TexturedModel> texturedModels;
 
 
 	public Map() {
@@ -21,7 +21,7 @@ public class Map {
 	public void removeModel(TexturedModel t){
 		texturedModels.remove(t);
 	}
-	public List<TexturedModel> getTexturedModelsArray()
+	public ArrayList<TexturedModel> getTexturedModelsArray()
 	{
 		return texturedModels;
 	}

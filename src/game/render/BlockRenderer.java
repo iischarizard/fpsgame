@@ -33,7 +33,7 @@ public class BlockRenderer {
 			bindTexture(textureID);
 			List<TexturedModel> batch = textModels.get(textureID);
 			for (TexturedModel text : batch) {
-				if(!text.getHit()) {
+				//if(!text.getHit()) {
 					RawModel model = text.getRawModel();
 					GL30.glBindVertexArray(model.getVaoID());
 					GL20.glEnableVertexAttribArray(0);
@@ -44,7 +44,7 @@ public class BlockRenderer {
 					GL20.glDisableVertexAttribArray(0);
 					GL20.glDisableVertexAttribArray(1);
 					GL30.glBindVertexArray(0);
-				}
+				//}
 			}
 		}
 		unbindModel();

@@ -4,7 +4,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import game.model.TexturedModel;
 
-public class Entity {
+public abstract class Entity {
 
 	private Vector3f position;
 	private Vector3f rotation;
@@ -22,6 +22,8 @@ public class Entity {
 		this.scale = scale;
 	}
 
+	public abstract void update(float dt);
+	
 	public Vector3f getPosition() {
 		return position;
 	}

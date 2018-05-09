@@ -220,6 +220,126 @@ public class Loader {
 		}
 		return map;
 	}
+	public TexturedModel loadTexturedModel(String filename) {
+		TexturedModel b = new TexturedModel();
+		try {
+			BufferedReader br = new BufferedReader(new FileReader("res/objects/" + filename + ".obj"));
+			String line = "";
+
+			int vertexOffset = 1;
+			int textureOffset = 1;
+			int normalOffset = 1;
+
+			while ((line = br.readLine()) != null) {
+				if (line.startsWith("#")) continue;
+				if (line.startsWith("o")) {
+
+					String textureName = "";
+					int faceCount = 0;
+					int vCount = 0;
+					int vtCount = 0;
+					int vnCount = 0;
+					boolean firstFace = true;
+
+					List<Vector3f> vertices = new ArrayList<Vector3f>();
+					List<Vector2f> textures = new ArrayList<Vector2f>();
+					List<Vector3f> normals = new ArrayList<Vector3f>();
+					List<Integer> indices = new ArrayList<Integer>();
+
+					float[] vertexArray = null;
+					float[] textureArray = null;
+					float[] normalArray = null;
+					int[] indiceArray = null;
+
+					while (true) {
+						line = br.readLine();
+						if(line == null)
+							break;
+						String[] t = line.split(" ");
+						if (t[0].equals("v")) {
+							Vector3f vertex = new Vector3f();
+							vertex.setX(Float.parseFloat(t[1]));
+							vertex.setY(Float.parseFloat(t[2]));
+							vertex.setZ(Float.parseFloat(t[3]));
+							vertices.add(vertex);
+							vCount++;
+						}
+						if (t[0].equals("vt")) {
+							Vector2f texture = new Vector2f();
+							texture.setX(Float.parseFloat(t[1]));
+							texture.setY(Float.parseFloat(t[2]));
+							textures.add(texture);
+							vtCount++;
+						}
+						if (t[0].equals("vn")) {
+							Vector3f normal = new Vector3f();
+							normal.setX(Float.parseFloat(t[1]));
+							normal.setY(Float.parseFloat(t[2]));
+							normal.setZ(Float.parseFloat(t[3]));
+							normals.add(normal);
+							vnCount++;
+						}
+
+						if (t[0].equals("usemtl")) {
+							textureName = t[1];
+						}
+						if (t[0].equals("f")) {
+							if (firstFace) {
+								textureArray = new float[vertices.size() * 2];
+								normalArray = new float[vertices.size() * 3];
+								firstFace = false;
+							}
+
+							for (int i = 1; i < 4; i++) {
+								String[] tx = t[i].split("/");
+
+								int indice = Integer.parseInt(tx[0]) - vertexOffset;
+								b.calculateBounds(vertices.get(indice));
+								indices.add(indice);
+								Vector2f texture = textures.get(Integer.parseInt(tx[1]) - textureOffset);
+								textureArray[indice * 2    ] = texture.getX();
+								textureArray[indice * 2 + 1] = texture.getY();
+
+								Vector3f normal = normals.get(Integer.parseInt(tx[2]) - normalOffset);
+								normalArray[indice * 3    ] = normal.getX();
+								normalArray[indice * 3 + 1] = normal.getY();
+								normalArray[indice * 3 + 2] = normal.getZ();
+							}
+
+							if (++faceCount >= 12) break;
+						}
+					}
+					vertexArray = new float[vertices.size() * 3];
+					indiceArray = new int[indices.size()];
+
+					int vertexPointer = 0;
+					for (Vector3f vertex : vertices) {
+						vertexArray[vertexPointer++] = vertex.getX();
+						vertexArray[vertexPointer++] = vertex.getY();
+						vertexArray[vertexPointer++] = vertex.getZ();
+					}
+
+					for (int i = 0; i < indices.size(); i++) {
+						indiceArray[i] = indices.get(i);
+					}
+
+					RawModel rawModel = loadRawModel(vertexArray, textureArray, normalArray, indiceArray);
+					ModelTexture modelTexture = new ModelTexture(TextureMaterialTools.fetchMaterial(textureName), loadTexture(textureName));
+					b.setRawModel(rawModel);
+					b.setTexture(modelTexture);
+
+					vertexOffset += vCount;
+					textureOffset += vtCount;
+					normalOffset += vnCount;
+				}
+			}
+			br.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		return b;
+	}
 	private IntBuffer createIntBuffer(int[] data) {
 		IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
 		buffer.put(data);
