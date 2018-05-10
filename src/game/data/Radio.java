@@ -1,5 +1,7 @@
 package game.data;
 
+import game.UI.HudRenderer;
+
 /**
  * Created by Katkr on 4/30/2018.
  */
@@ -19,6 +21,13 @@ public class Radio extends AudioControls {
         if(counter < 0)
             counter = audioList.size()-1;
         audioList.get(counter).playAsMusic(1,1,false);
-        System.out.println(audioList.get(counter));
+        updateSong();
+        System.out.println(audioList.size());
+    }
+    public void updateSong(){
+        HudRenderer.updateCurrentSong(songNames.get(counter));
+    }
+    public boolean isSongPlaying(){
+        return audioList.get(counter).isPlaying();
     }
 }

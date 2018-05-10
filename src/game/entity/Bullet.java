@@ -21,18 +21,17 @@ public class Bullet {
         this.speed = speed;
         this.yRotation = rotationY;
         this.xRotation = rotationX;
-        System.out.println(yRotation);
+
         direction.x = (float)Math.cos(Math.toRadians(yRotation + 90));
         direction.z = (float)Math.sin(Math.toRadians(yRotation + 90));
         direction.y = (float)Math.cos(Math.toRadians(xRotation + 90));
 
     }
     public void move(){
-
-        position.x += Math.sin(Math.toRadians(yRotation)) * speed *3;
-        position.z -= Math.cos(Math.toRadians(yRotation)) * speed *3;
-        position.y -= Math.sin(Math.toRadians(xRotation)) * speed *3;
-        System.out.println(position);
+        position.x += Math.sin(Math.toRadians(yRotation)) * speed *10;
+        position.z -= Math.cos(Math.toRadians(yRotation)) * speed *10;
+        position.y -= Math.sin(Math.toRadians(xRotation)) * speed *10;
+       // System.out.println(position);
     }
     public boolean collides(List<TexturedModel> texturedArray){
         for (TexturedModel b : texturedArray) {

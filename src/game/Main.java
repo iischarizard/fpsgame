@@ -7,7 +7,8 @@ import org.lwjgl.opengl.DisplayMode;
 public class Main {
 
 	private static boolean forceStop = false;
-
+	public static int WIDTH = 1280;
+	public static int HEIGHT = 720;
 	public static void main(String[] args) {
 		try {
 			Display.setDisplayMode(new DisplayMode(1280, 720));
@@ -17,13 +18,19 @@ public class Main {
 			e.printStackTrace();
 		}
 
+
 		Game game = new Game();
-		game.init();
 		game.initGL();
+		game.init();
 		game.start();
 
 		long past = System.nanoTime();
 		while (game.isRunning()) {
+
+			StateManager.update();
+			Display.update();
+			Display.sync(60);
+
 			long now = System.nanoTime();
 			float delta = (now - past) / 1000000000.0f;
 			past = now;
@@ -33,8 +40,6 @@ public class Main {
 			game.update(delta);
 			game.render();
 
-			Display.update();
-			Display.sync(60);
 		}
 		game.cleanUp();
 	}

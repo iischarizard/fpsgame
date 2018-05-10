@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import game.Game;
+import game.UI.HudRenderer;
+
+import game.tool.Font;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
@@ -30,7 +34,9 @@ public class RenderMaster {
 	private Map<TexturedModel, List<Entity>> entities;
 	private Map<Integer, List<TexturedModel>> blocks;
 
-	public RenderMaster() {
+
+
+	public RenderMaster(){
 		createProjectionMatrix();
 
 		entityRenderer = new EntityRenderer(projectionMatrix);
@@ -39,16 +45,23 @@ public class RenderMaster {
 		
 		entities = new HashMap<TexturedModel, List<Entity>>();
 		blocks = new HashMap<Integer, List<TexturedModel>>();
+
+
 	}
 
 	public void render(Player camera) {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
+
 		createViewMatrix(camera);
+
 		blockRenderer.render(viewMatrix, blocks);
 		entityRenderer.render(viewMatrix, entities);
 		entities.clear();
 		blocks.clear();
 		hudRenderer.render();
+
+
 	}
 
 	public void processEntity(Entity entity) {

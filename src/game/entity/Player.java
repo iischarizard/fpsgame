@@ -12,6 +12,7 @@ import game.map.Map;
 import java.util.ArrayList;
 
 public class Player {
+	public static boolean outOfMenu = false;
 
 	// Position and movement
 	private Vector3f position;
@@ -52,7 +53,7 @@ public class Player {
 		jumpForce = 20.0f;
 
 		String[] sfxnoises = {"res/sfx/pistol.wav"};
-		sfx.loadSongs(sfxnoises);
+		sfx.loadSongs(sfxnoises,"res/sfx/");
 
 		calcGroundHeight();
 	}
@@ -149,21 +150,22 @@ public class Player {
 		}
 		//System.out.println(rotation);
 
-		while(Mouse.next()) {
+		while(Mouse.next() && outOfMenu) {
 			if (Mouse.getEventButtonState()) {
 				if (Mouse.isButtonDown(0)){
 					//System.out.println("PLAYER POS: "+position);
-					
-					bullets.add(new Bullet(position.x,position.y+4,position.z,bulletSpeed * dt,rotation.y,rotation.x));
+					bullets.add(new Bullet(position.x,position.y+4,position.z,speed,rotation.y,rotation.x));
 					sfx.playFile(0);
-				}	
+				}
 			}
 		}
-		//if (moved) {
+		if (moved) {
 			calcGroundHeight();
-		//}
+		}
 	}
-
+	public static void setOutOfMenu(){
+		outOfMenu = true;
+	}
 	private void verticalMovement(float dt) {
 		if (dy != 0) {
 			previous.setY(position.getY());
