@@ -3,6 +3,7 @@ package game;
 import java.util.ArrayList;
 
 import game.data.FolderReader;
+import game.entity.Enemy;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -12,7 +13,6 @@ import org.newdawn.slick.openal.SoundStore;
 import game.data.Loader;
 import game.data.Radio;
 import game.entity.Player;
-import game.entity.TestEntity;
 import game.map.Map;
 import game.model.TexturedModel;
 import game.render.RenderMaster;
@@ -31,7 +31,8 @@ public class Game implements GameBase {
 	private FolderReader fileReader = new FolderReader();
 
 	private ArrayList<TexturedModel> mapObjs;
-	private TestEntity testEntity;
+	private ArrayList<Enemy> enemies = new ArrayList<>();
+
 
 	public void init() {
 		renderMaster = new RenderMaster();
@@ -42,11 +43,15 @@ public class Game implements GameBase {
 		radio.loadSongs(s,"res/songs/");
 
 		mapObjs = map.getTexturedModelsArray();
-		testEntity = new TestEntity(new Vector3f(0, -50, 0), loader);
+		enemies.add(new Enemy(new Vector3f(0, 40, 0),loader,map));
 
+	}
+
+	public void startGameLogic(){
 
 
 	}
+
 
 	public void initGL() {
 		GL11.glClearColor(0.529f, 0.808f, 0.980f, 1.0f);
@@ -60,7 +65,12 @@ public class Game implements GameBase {
 
 	public void update(float dt) {
 		player.update(dt);
-		testEntity.update(dt);
+
+
+		for(Enemy e: enemies){
+			e.update(dt,player.getPosition());
+		}
+
 		while(Keyboard.next()) {
 			if (Keyboard.getEventKeyState()) {
 				if (Keyboard.isKeyDown(Keyboard.KEY_MINUS)) {
@@ -99,7 +109,9 @@ public class Game implements GameBase {
 		for (TexturedModel model : mapObjs){
 			renderMaster.processBlock(model);
 		}
-		renderMaster.processEntity(testEntity);
+		for(Enemy e : enemies){
+			renderMaster.processEntity(e.getModel());
+		}
 		renderMaster.render(player);
 
 	}
@@ -113,24 +125,27 @@ public class Game implements GameBase {
 		renderMaster.cleanUp();
 		Display.destroy();
 	}
+
+
+
 	public static void make2D() {
 		//GL11.glDisable(GL11.GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		GL11.glMatrixMode(GL11.GL_PROJECTION);                        // Select The Projection Matrix
-		GL11.glPushMatrix();                                     // Store The Projection Matrix
-		GL11.glLoadIdentity();                                   // Reset The Projection Matrix
-		GL11.glOrtho(0, Main.WIDTH, 0, Main.HEIGHT, -1, 1);// Set Up An Ortho Screen
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);                         // Select The Modelview Matrix
-		GL11.glPushMatrix();                                     // Store The Modelview Matrix
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glPushMatrix();
+		GL11.glLoadIdentity();
+		GL11.glOrtho(0, Main.WIDTH, 0, Main.HEIGHT, -1, 1);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glPushMatrix();
 		GL11.glLoadIdentity();
 	}
 
 	public static void make3D() {
-		GL11.glMatrixMode(GL11.GL_PROJECTION);                        // Select The Projection Matrix
-		GL11.glPopMatrix();                                      // Restore The Old Projection Matrix
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);                         // Select The Modelview Matrix
-		GL11.glPopMatrix();                                      // Restore The Old Projection Matrix
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glPopMatrix();
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glPopMatrix();
 		//GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 }

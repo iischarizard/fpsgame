@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class Bullet {
     private Vector3f position;
-    private Vector3f direction;
+
     private float yRotation;
     private float xRotation;
     private float speed;
@@ -17,14 +17,10 @@ public class Bullet {
 
     public Bullet(float x, float y, float z,float speed,float rotationY, float rotationX){
         position = new Vector3f(x,y,z);
-        direction = new Vector3f();
+
         this.speed = speed;
         this.yRotation = rotationY;
         this.xRotation = rotationX;
-
-        direction.x = (float)Math.cos(Math.toRadians(yRotation + 90));
-        direction.z = (float)Math.sin(Math.toRadians(yRotation + 90));
-        direction.y = (float)Math.cos(Math.toRadians(xRotation + 90));
 
     }
     public void move(){

@@ -28,7 +28,7 @@ public class StateManager {
             case GAME:
                 if(game == "") {
                     Player.setOutOfMenu();
-                    Sprite test = new Sprite("res/crosshair.png");
+                    Sprite test = new Sprite("res/textures/crosshair.png");
                     test.setWidth(0.07f);
                     test.setHeight(0.1f);
                     test.setX(0-test.getWidth()/2);

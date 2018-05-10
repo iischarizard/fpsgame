@@ -11,37 +11,16 @@ import game.map.Map;
 
 import java.util.ArrayList;
 
-public class Player {
+public class Player extends MovingPerson{
 	public static boolean outOfMenu = false;
 
-	// Position and movement
-	private Vector3f position;
-	private Vector3f previous;
-	private Vector3f rotation;
-	private float dy, groundHeight;
-
-	// Bounds
-	public static float width = 2;
-	public static float height = 4;
-	public static float length = 2;
-
-	private boolean onGround;
-	private boolean running;
-
-	// Speed constants
-	private float runSpeed;
-	private float walkSpeed;
-	private float speed;
-	private float gravity;
-	private float jumpForce;
 
 	private ArrayList<Bullet> bullets = new ArrayList <>();
-	private Map map;
 	private SoundEffects sfx = new SoundEffects();
 	private float bulletSpeed = 200f;
 
 	public Player(Map map) {
-		this.map = map;
+		super(map);
 
 		position = new Vector3f(0, 35, 0);
 		previous = new Vector3f(0, 35, 0);
@@ -166,80 +145,7 @@ public class Player {
 	public static void setOutOfMenu(){
 		outOfMenu = true;
 	}
-	private void verticalMovement(float dt) {
-		if (dy != 0) {
-			previous.setY(position.getY());
-			position.y += dy;
-			if (collides()) {
-				if (dy > 0) {
-					position.setY(previous.getY());
-					dy = 0;
-				}
-				else {
-					position.y = groundHeight;
-				}
-			}
-		}
-		if (position.y <= groundHeight) {
-			if (!onGround) {
-				onGround = true;
-				position.y = groundHeight;
-				dy = 0;
-			}
-		}
-		else {
-			onGround = false;
-		}
-		if (!onGround) {
-			dy -= gravity * dt;
-		}
-	}
 
-	private void calcGroundHeight() {
-		groundHeight = Float.NEGATIVE_INFINITY;
-		for (Bounds b : map.getTexturedModelsArray()) {
-			if ((position.x <= b.getMaxX() && position.x + width >= b.getMinX()) && //
-					(position.y >= b.getMaxY() && groundHeight <= b.getMaxY()) && //
-					(position.z <= b.getMaxZ() && position.z + length >= b.getMinZ())) {
-				groundHeight = b.getMaxY();
-			}
-			//in the air
-			if (position.y != groundHeight) {
 
-			}
-		}
-	}
-
-	private boolean collides() {
-		for (Bounds b : map.getTexturedModelsArray()) {
-			if ((position.x <= b.getMaxX() && position.x + width >= b.getMinX()) && //
-					(position.y < b.getMaxY() && position.y + height >= b.getMinY()) && //
-					(position.z <= b.getMaxZ() && position.z + length >= b.getMinZ())) //
-				return true;
-		}
-		return false;
-	}
-	public Map getMap(){
-		return map;
-	}
-	public Vector3f getPosition() {
-		return position;
-	}
-
-	public Vector3f getRotation() {
-		return rotation;
-	}
-
-	public float getWidth() {
-		return width;
-	}
-
-	public float getHeight() {
-		return height;
-	}
-
-	public float getLenght() {
-		return length;
-	}
 
 }
