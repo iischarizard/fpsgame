@@ -1,0 +1,90 @@
+# Blender MTL File: 'school.blend'
+# Material Count: 8
+
+newmtl chairSeat
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\Matthew Hong\Desktop\FpsGame\res\textures\chairSeat.png
+
+newmtl locker
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.519218 0.640000 0.587849
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\Matthew Hong\Desktop\FpsGame\res\textures\locker.png
+
+newmtl metal0
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.586909 0.632649 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\Matthew Hong\Desktop\FpsGame\res\textures\metal0.png
+
+newmtl plank1
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\Matthew Hong\Desktop\FpsGame\res\textures\plank1.png
+
+newmtl redPlastic
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\Matthew Hong\Desktop\FpsGame\res\textures\redPlastic.png
+
+newmtl tile1
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\Matthew Hong\Desktop\FpsGame\res\textures\tile1.png
+
+newmtl wall1
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\Matthew Hong\Desktop\FpsGame\res\textures\wall1.png
+
+newmtl whiteBoard
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\Matthew Hong\Desktop\FpsGame\res\textures\whiteBoard.png
