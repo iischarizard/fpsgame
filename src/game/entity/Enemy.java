@@ -64,63 +64,63 @@ public class Enemy extends MovingPerson {
     }
     private Node targetNode;
     public ArrayList<Vector3f> findPath(){
-        ArrayList<Node> open = new ArrayList<Node>();
-        ArrayList<Node> openPrev = new ArrayList<Node>();
-        ArrayList<Node> closed = new ArrayList<Node>();
-        float min = Float.MAX_VALUE;
-        Node m = null;
-        for(Node n : grid.getNodes()){
-            if(n.getCost(position)<min){
-                min = n.getCost(position);
-                m = n;
-            }
-        }
-        m.setCost(m.getCost(targetNode.getPosition()));
-        System.out.println("s: " + m.getPosition());
-        open.add(m);
-
-        Node n = null;
-        try{
-            while(open.size()!=0){
-                for(Node a : open){
-                    System.out.print(a.getPosition()+ " -- ");
-                }
-                System.out.println();
-                n = selectNode(open);
-                if(n.equals(targetNode) || open.equals(openPrev)){
-                    return buildPath(n);
-                }
-                openPrev = open;
-                open.remove(n);
-                closed.add(n);
-
-                for(Vector3f a : n.getAdjacentNodePositions()){
-                    Node temp = null;
-                    for(Node z : grid.getNodes()){
-                        if(z.getPosition().equals(a)){
-                            temp = z;
-                            break;
-                        }
-                    }
-                    if(!closed.contains(temp)){
-                        if(!open.contains(temp)){
-                            open.add(temp);
-                        }else{
-                            if(temp.getCost()>temp.getCost(targetNode.getPosition())+temp.getCost(n.getPosition())+n.getCost()){
-                                temp.setPrevious(n);
-                                temp.setCost(temp.getCost(temp.getPrevious().getPosition())+temp.getPrevious().getCost()+temp.getCost(targetNode.getPosition()));
-                            }
-                        }
-                    }
-                }
-
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        ArrayList<Vector3f> f = new ArrayList<Vector3f>();
-        f.add(m.getPosition());
-        return f;
+    	ArrayList<Node> open = new ArrayList<Node>();
+    	ArrayList<Node> openPrev = new ArrayList<Node>();
+    	ArrayList<Node> closed = new ArrayList<Node>();
+    	float min = Float.MAX_VALUE;
+    	Node m = null;
+    	for(Node n : grid.getNodes()){
+    		if(n.getCost(position)<min){
+    			min = n.getCost(position);
+    			m = n;
+    		}
+    	}
+    	m.setCost(m.getCost(targetNode.getPosition()));
+    	System.out.println("s: " + m.getPosition());
+    	open.add(m);
+    	
+    	Node n = null;
+    	try{
+	    	while(open.size()!=0){
+	    		for(Node a : open){
+	    			System.out.print(a.getPosition()+ " -- ");
+	    		}
+	    		System.out.println();
+	    		n = selectNode(open);
+	    		if(n.equals(targetNode) || open.equals(openPrev)){
+	    			return buildPath(n);
+	    		}
+	    		openPrev = open;
+	    		open.remove(n);
+	    		closed.add(n);
+	    		
+	    		for(Vector3f a : n.getAdjacentNodePositions()){
+	    			Node temp = null;
+	    			for(Node z : grid.getNodes()){
+	    				if(z.getPosition().equals(a)){
+	    					temp = z;
+	    					break;
+	    				}
+	    			}
+	    			if(!closed.contains(temp)){
+	    				if(!open.contains(temp)){
+	    					open.add(temp);
+	    				}else{
+	    					if(temp.getCost()>temp.getCost(targetNode.getPosition())+temp.getCost(n.getPosition())+n.getCost()){
+	        	    			temp.setPrevious(n);
+	        					temp.setCost(temp.getCost(temp.getPrevious().getPosition())+temp.getPrevious().getCost()+temp.getCost(targetNode.getPosition()));
+	    					}
+	    				}
+	    			}
+	    		}
+	    		
+	    	}
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    	ArrayList<Vector3f> f = new ArrayList<Vector3f>();
+    	f.add(m.getPosition());
+    	return f;
     }
 
     public ArrayList<Vector3f> buildPath(Node n){
@@ -153,6 +153,7 @@ public class Enemy extends MovingPerson {
 
         return n;
     }
+
     public void update(float dt, Vector3f playerPosition, ArrayList<TexturedModel> mapObjs,Player player){
         this.playerPos = playerPosition;
         if(distanceBetween(playerPos, position)<=vision){
@@ -172,12 +173,22 @@ public class Enemy extends MovingPerson {
                 m = n;
             }
         }
-        if(targetNode == null || !targetNode.equals(m)){
-            targetNode = m;
-            path = findPath();
-            pathIndex = 0;
-        }
-
+    	targetLocation.set(playerPos.getX(), playerPos.getY(), playerPos.getZ());
+    	float min = Float.MAX_VALUE;
+    	Node m = null;
+    	for(Node n : grid.getNodes()){
+    		if(n.getCost(targetLocation)<min){
+    			min = n.getCost(targetLocation);
+    			m = n;
+    		}
+    	}
+    	if(targetNode == null || !targetNode.equals(m)){  		
+    		targetNode = m;
+    		path = findPath();
+    		pathIndex = 0;
+    	}
+    	
+    	
 
         //Not sure if the math is correct
         direction.x = (float)Math.cos(Math.toRadians(rotation.x + 90));
