@@ -40,6 +40,8 @@ public class Game implements GameBase {
 	private ArrayList<Enemy> enemies = new ArrayList<>();
 	
 	private NavigationMesh navMesh;
+	private Grid grid;
+	private int wave = 1;
 
 	public void init() {
 		renderMaster = new RenderMaster();
@@ -50,7 +52,7 @@ public class Game implements GameBase {
 		radio.loadSongs(s,"res/songs/");
 
 		mapObjs = map.getTexturedModelsArray();
-		Grid grid = new Grid();
+		grid = new Grid();
 		enemies.add(new Enemy(new Vector3f(77.41691f, 12.207812f, -50.254097f),loader,map, grid));
 
 	}
@@ -81,12 +83,17 @@ public class Game implements GameBase {
 					removeEnemy.add(e);
 					continue;
 				}
-				e.update(dt,player.getPosition());
+				e.update(dt,player.getPosition(), mapObjs);
 			}
 			for(Enemy e: removeEnemy){
 				enemies.remove(e);
 			}
-	
+			if(enemies.size()==0){
+				wave++;
+				for(int i = 0; i < wave; i++){
+					enemies.add(new Enemy(grid.getRandomNode().getPosition(),loader,map, grid));
+				}
+			}
 			while(Keyboard.next()) {
 				if (Keyboard.getEventKeyState()) {
 					if (Keyboard.isKeyDown(Keyboard.KEY_MINUS)) {
