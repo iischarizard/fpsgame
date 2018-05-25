@@ -24,7 +24,6 @@ public class Entity {
 
 	public void update(float dt){};
 	
-
 	public Vector3f getPosition() {
 		return position;
 	}
@@ -44,6 +43,12 @@ public class Entity {
 	public float getScale() {
 		return scale;
 	}
+	public void setX(double x){position.x += x;}
+	public void setY(double y){position.y -= y;}
+	public void setZ(double z){position.z -= z;}
+	public float getX(){return position.x;}
+	public float getY(){return position.y;}
+	public float getZ(){return position.z;}
 
 	public void setScale(float scale) {
 		this.scale = scale;

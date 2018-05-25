@@ -8,7 +8,6 @@ public abstract class Bounds {
 
 	private float minX, minY, minZ;
 	private float maxX, maxY, maxZ;
-	private TexturedModel model;
 
 	public Bounds() {
 		minX = Float.POSITIVE_INFINITY;

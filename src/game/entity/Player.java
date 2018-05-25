@@ -15,23 +15,24 @@ public class Player extends MovingPerson{
 	public static boolean outOfMenu = false;
 
 
-	private ArrayList<Bullet> bullets = new ArrayList <>();
+	private ArrayList<Bullet> bullets;
 	private SoundEffects sfx = new SoundEffects();
-	private float bulletSpeed = 100f;
-	
-	private boolean flight = false;
+	private float bulletSpeed = 200f;
+	public ArrayList<Enemy> enemies;
+	private boolean wallride = false;
 
-	public Player(Map map) {
+	public Player(Map map, ArrayList<Enemy> enemies, ArrayList<Bullet> bullets) {
 		super(map);
-
-		position = new Vector3f(0, 12.207812f, 0);
+		this.enemies = enemies;
+		this.bullets = bullets;
+		position = new Vector3f(0, 35, 0);
 		previous = new Vector3f(0, 35, 0);
 		rotation = new Vector3f(0, 0, 0);
 
 		runSpeed = 30.0f;
-		walkSpeed = 20.0f;
+		walkSpeed = 15.0f;
 		gravity = 0.625f;
-		jumpForce = 20.0f;
+		jumpForce = 30.0f;
 
 		String[] sfxnoises = {"res/sfx/pistol.wav"};
 		sfx.loadSongs(sfxnoises,"res/sfx/");
@@ -39,8 +40,8 @@ public class Player extends MovingPerson{
 		calcGroundHeight();
 	}
 
-	public void update(float dt, ArrayList<Enemy> enemies) {
-
+	public void update(float dt) {
+		//System.out.println(position);
 		boolean moved = false;
 		running = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
 		if(running){
@@ -51,20 +52,9 @@ public class Player extends MovingPerson{
 		if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)){
 
 		}
-		if(!flight)
+		if(!wallride)
 			verticalMovement(dt);
 //		/System.out.println(position);
-		ArrayList<Bullet> removeBullets = new ArrayList <>();
-		for(Bullet b : bullets){
-			b.move();
-			if(b.collides(map.getTexturedModelsArray(), enemies, this)){
-				removeBullets.add(b);
-			}
-			//System.out.println(b.getPosition());
-		}
-		for(Bullet collidedBullets : removeBullets){
-			bullets.remove(collidedBullets);
-		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
 			position.set(0.0f, 35.0f, 0.0f);
@@ -72,19 +62,7 @@ public class Player extends MovingPerson{
 			calcGroundHeight();
 			dy = 0.0f;
 		}
-		/*while(Keyboard.next()) {
-			if (Keyboard.getEventKeyState()) 
-				if (Keyboard.isKeyDown(Keyboard.KEY_BACKSLASH)) 
-					flight = !flight;
-		}*/
-		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && flight){
-			previous.setY(position.y);
-			position.y -= speed;
-			if(collides()) position.y = previous.y;
-		}
 
-		if (Keyboard.isKeyDown(Keyboard.KEY_L) && !Mouse.isGrabbed())
-			Mouse.setGrabbed(true);
 		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && Mouse.isGrabbed())
 			Mouse.setGrabbed(false);
 
@@ -111,31 +89,45 @@ public class Player extends MovingPerson{
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
 			previous.setX(position.getX());
 			position.x += Math.sin(Math.toRadians(rotation.y - 90)) * speed;
-			if (collides()) position.x = previous.x;
+			if (collides() && onGround) position.x = previous.x;
 			previous.setZ(position.getZ());
 			position.z -= Math.cos(Math.toRadians(rotation.y - 90)) * speed;
-			if (collides()) position.z = previous.z;
+			if (collides() && onGround) position.z = previous.z;
+			if(collides() && Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
+				dy = 0;
+				position.x = previous.x;
+				position.y = previous.y;
+				position.z = previous.z;
+				wallride = true;
+				System.out.println(1);
+			}else{
+				wallride = false;
+			}
 			moved = true;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 			previous.setX(position.getX());
 			position.x += Math.sin(Math.toRadians(rotation.y + 90)) * speed;
-			if (collides()) position.x = previous.x;
+			if (collides() && onGround) position.x = previous.x;
 			previous.setZ(position.getZ());
 			position.z -= Math.cos(Math.toRadians(rotation.y + 90)) * speed;
-			if (collides()) position.z = previous.z;
+			if (collides() && onGround) position.z = previous.z;
+			if(collides() && Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
+				dy = 0;
+				position.x = previous.x;
+				position.y = previous.y;
+				position.z = previous.z;
+				wallride = true;
+				System.out.println(1);
+			}else{
+				wallride = false;
+			}
 			moved = true;
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
-			if(!flight  && onGround){
-				dy = jumpForce * dt;
-				onGround = false;
-				moved = true;
-			}else if(flight){
-				previous.setY(position.getY());
-				position.y += speed;
-				if(collides())position.y = previous.y;
-			}
+		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && onGround ) {
+			dy = jumpForce * dt;
+			onGround = false;
+			moved = true;
 		}
 //		/Mouse.setCursorPosition(1280/2,720/2);
 		if (Mouse.isGrabbed()) {
@@ -152,7 +144,7 @@ public class Player extends MovingPerson{
 			if (Mouse.getEventButtonState()) {
 				if (Mouse.isButtonDown(0)){
 					//System.out.println("PLAYER POS: "+position);
-					bullets.add(new Bullet(position.x,position.y+4,position.z,bulletSpeed*dt,rotation.y,rotation.x));
+					bullets.add(new Bullet(position.x,position.y+4,position.z,speed,rotation.y,rotation.x));
 					sfx.playFile(0);
 				}
 			}
@@ -161,13 +153,40 @@ public class Player extends MovingPerson{
 			calcGroundHeight();
 		}
 	}
+	@Override
+	public void verticalMovement(float dt) {
+		if (dy != 0) {
+			previous.setY(position.getY());
+			position.y += dy;
+			if (collides()) {
+				if (dy > 0) {
+					position.setY(previous.getY());
+					dy = 0;
+				}
+				else {
+					position.y = groundHeight;
+				}
+			}
+		}
+		if (position.y <= groundHeight) {
+			if (!onGround) {
+				onGround = true;
+				position.y = groundHeight;
+				dy = 0;
+			}
+		}
+		else {
+			onGround = false;
+		}
+		if (!onGround && !collides()) {
+			dy -= gravity * dt;
+		}
+
+	}
 	public static void setOutOfMenu(){
 		outOfMenu = true;
 	}
 
-	public void toggleFlight(){
-		flight = !flight;
-	}
 
 
 }
