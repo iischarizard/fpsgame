@@ -28,6 +28,7 @@ public class BlockRenderer {
 	public void render(Matrix4f viewMatrix, Map<Integer, List<TexturedModel>> textModels) {
 		shader.start();
 		shader.loadViewMatrix(viewMatrix);
+		ArrayList<TexturedModel> remove =  new ArrayList <>();
 		for (int textureID : textModels.keySet()) {
 			bindTexture(textureID);
 			List<TexturedModel> batch = textModels.get(textureID);

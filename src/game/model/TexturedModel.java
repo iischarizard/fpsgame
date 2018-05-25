@@ -51,11 +51,4 @@ public class TexturedModel extends Bounds{
 		return texture;
 	}
 
-	@Override
-	public boolean equals(Object a){
-		TexturedModel b = (TexturedModel)a;
-		if(getRawModel().equals(b.getRawModel())&&getPosition().equals(b.getPosition())&&getHit() == b.getHit()&&getTexture().equals(b.getTexture()))
-			return true;
-		return false;
-	}
 }
