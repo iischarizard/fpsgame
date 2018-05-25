@@ -111,7 +111,9 @@ public class Grid {
 	public ArrayList<Node> getNodes() {
 		return nodes;
 	}
-
+	public Node getRandomNode(){
+		return nodes.get((int)(Math.random()*nodes.size()));
+	}
 	public void setNodes(ArrayList<Node> nodes) {
 		this.nodes = nodes;
 	}

@@ -3,6 +3,7 @@ package game.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import game.data.Loader;
 import org.lwjgl.util.vector.Vector3f;
 
 import game.model.TexturedModel;
@@ -10,18 +11,17 @@ import game.model.TexturedModel;
  * Created by Katkr on 4/23/2018.
  */
 public class Bullet {
-    private Vector3f position;
 
     private float yRotation;
     private float xRotation;
     private float speed;
     private float aliveTime;
+    private Entity model;
 
 
 
     public Bullet(float x, float y, float z,float speed,float rotationY, float rotationX){
-        position = new Vector3f(x,y,z);
-
+        this.model = new Entity(Loader.loadTexturedModel("holyshititworks"),new Vector3f(x,y,z), new Vector3f(0,0,0), .2f);
         this.speed = speed;
         this.yRotation = rotationY;
         this.xRotation = rotationX;
@@ -32,30 +32,29 @@ public class Bullet {
     
     
     public void move(){
-        position.x += Math.sin(Math.toRadians(yRotation)) * speed *10;
-        position.z -= Math.cos(Math.toRadians(yRotation)) * speed *10;
-        position.y -= Math.sin(Math.toRadians(xRotation)) * speed *10;
-       // System.out.println(position);
+        model.setX(Math.sin(Math.toRadians(yRotation)) * speed *10);
+        model.setZ(Math.cos(Math.toRadians(yRotation)) * speed *10);
+        model.setY(Math.sin(Math.toRadians(xRotation)) * speed *10);
+        //System.out.println(model.getPosition());
     }
-    public boolean collides(List<TexturedModel> texturedArray, ArrayList<Enemy> enemies, Player p){
+    public boolean collides(List<TexturedModel> texturedArray, ArrayList<Enemy> enemies){
     	//System.out.println(aliveTime-System.nanoTime());
     	if(System.nanoTime()-aliveTime>1500000000){
     		//System.out.println("hm");
     		return true;
     	}
         for (TexturedModel b : texturedArray) {
-            if ((position.x <= b.getMaxX() && position.x >= b.getMinX()) && //
-                    (position.y < b.getMaxY() && position.y >= b.getMinY()) && //
-                    (position.z <= b.getMaxZ() && position.z >= b.getMinZ())) {
-                b.setHit(true);
+            if ((model.getPosition().x <= b.getMaxX() && model.getPosition().x >= b.getMinX()) && //
+                    (model.getPosition().y < b.getMaxY() && model.getPosition().y >= b.getMinY()) && //
+                    (model.getPosition().z <= b.getMaxZ() && model.getPosition().z >= b.getMinZ())) {
                 //System.out.println(b.getTexture().getMaterial());
                 return true;
             }
         }
         for (Enemy e : enemies) {
-            if ((position.x <= e.getPosition().getX()+e.getWidth()*2 && position.x >= e.getPosition().getX()-e.getWidth()*2) && //
-                    (position.y < e.getPosition().getY()+e.getHeight()*2 && position.y >= e.getPosition().getY()-e.getHeight()*2) && //
-                    (position.z <= e.getPosition().getZ()+e.getLength()*2 && position.z >= e.getPosition().getZ()-e.getLength()*2)) {
+            if ((model.getPosition().x <= e.getPosition().getX()+e.getWidth()*2 && model.getPosition().x >= e.getPosition().getX()-e.getWidth()*2) && //
+                    (model.getPosition().y < e.getPosition().getY()+e.getHeight()*2 && model.getPosition().y >= e.getPosition().getY()-e.getHeight()*2) && //
+                    (model.getPosition().z <= e.getPosition().getZ()+e.getLength()*2 && model.getPosition().z >= e.getPosition().getZ()-e.getLength()*2)) {
                 e.setHit(true);
                 //System.out.println(b.getTexture().getMaterial());
                 return true;
@@ -71,6 +70,9 @@ public class Bullet {
         return false;
     }
     public Vector3f getPosition(){
-        return position;
+        return model.getPosition();
+    }
+    public Entity getModel(){
+        return model;
     }
 }

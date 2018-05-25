@@ -48,6 +48,13 @@ public class Entity {
 	public void setScale(float scale) {
 		this.scale = scale;
 	}
+	public void setX(double x){this.position.x+=x;}
+	public void setY(double y){this.position.y-=y;}
+	public void setZ(double z){this.position.z-=z;}
+
+	public float getX(double x){return this.position.x;}
+	public float getY(double y){return this.position.y;}
+	public float getZ(double z){return this.position.z;}
 
 	public TexturedModel getModel() {
 		return model;

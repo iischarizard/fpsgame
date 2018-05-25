@@ -29,11 +29,12 @@ import game.tool.TextureMaterialTools;
 
 public class Loader {
 
-	private List<Integer> vaos = new ArrayList<Integer>();
-	private List<Integer> vbos = new ArrayList<Integer>();
-	private HashMap<String, Integer> textures = new HashMap<String, Integer>();
+	private static List<Integer> vaos = new ArrayList<Integer>();
+	private static List<Integer> vbos = new ArrayList<Integer>();
+	private static HashMap<String, Integer> textures = new HashMap<String, Integer>();
 
-	public RawModel loadRawModel(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
+	public static
+	RawModel loadRawModel(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
 		int vaoID = createVAO();
 		bindIndicesBuffer(indices);
 		storeDataInVBO(0, 3, positions);
@@ -43,7 +44,7 @@ public class Loader {
 		return new RawModel(vaoID, indices.length);
 	}
 
-	public int loadTexture(String filename) {
+	public static int loadTexture(String filename) {
 		if (textures.containsKey(filename)) return textures.get(filename);
 		Texture texture = null;
 		try {
@@ -64,7 +65,7 @@ public class Loader {
 		return textureID;
 	}
 
-	public void cleanUp() {
+	public static void cleanUp() {
 		for (int vao : vaos)
 			GL30.glDeleteVertexArrays(vao);
 		for (int vbo : vbos)
@@ -73,14 +74,14 @@ public class Loader {
 			GL11.glDeleteTextures(texture);
 	}
 
-	private int createVAO() {
+	private static int createVAO() {
 		int vaoID = GL30.glGenVertexArrays();
 		vaos.add(vaoID);
 		GL30.glBindVertexArray(vaoID);
 		return vaoID;
 	}
 
-	private void storeDataInVBO(int index, int size, float[] data) {
+	private static void storeDataInVBO(int index, int size, float[] data) {
 		int vboID = GL15.glGenBuffers();
 		vbos.add(vboID);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
@@ -91,14 +92,14 @@ public class Loader {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 	}
 
-	private void bindIndicesBuffer(int[] indices) {
+	private static void bindIndicesBuffer(int[] indices) {
 		int vboID = GL15.glGenBuffers();
 		vbos.add(vboID);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboID);
 		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, createIntBuffer(indices), GL15.GL_STATIC_DRAW);
 	}
 
-	public Map loadMap(String filename) {
+	public static Map loadMap(String filename) {
 		Map map = new Map();
 		try {
 			BufferedReader br = new BufferedReader(new FileReader("res/maps/" + filename + ".obj"));
@@ -220,7 +221,7 @@ public class Loader {
 		}
 		return map;
 	}
-	public TexturedModel loadTexturedModel(String filename) {
+	public static TexturedModel loadTexturedModel(String filename) {
 		TexturedModel b = new TexturedModel();
 		try {
 			BufferedReader br = new BufferedReader(new FileReader("res/objects/" + filename + ".obj"));
@@ -340,14 +341,14 @@ public class Loader {
 		}
 		return b;
 	}
-	private IntBuffer createIntBuffer(int[] data) {
+	private static IntBuffer createIntBuffer(int[] data) {
 		IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
 		buffer.put(data);
 		buffer.flip();
 		return buffer;
 	}
 
-	private FloatBuffer createFloatBuffer(float[] data) {
+	private static FloatBuffer createFloatBuffer(float[] data) {
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
 		buffer.put(data);
 		buffer.flip();

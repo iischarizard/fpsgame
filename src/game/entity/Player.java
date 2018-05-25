@@ -14,16 +14,18 @@ import java.util.ArrayList;
 public class Player extends MovingPerson{
 	public static boolean outOfMenu = false;
 
+	public static int health = 10;
 
-	private ArrayList<Bullet> bullets = new ArrayList <>();
-	private SoundEffects sfx = new SoundEffects();
+	private ArrayList<Bullet> bullets;
+	private static SoundEffects sfx = new SoundEffects();
 	private float bulletSpeed = 100f;
+	private boolean wallride = false;
 	
 	private boolean flight = false;
 
-	public Player(Map map) {
+	public Player(Map map, ArrayList<Bullet> bullets) {
 		super(map);
-
+		this.bullets = bullets;
 		position = new Vector3f(0, 12.207812f, 0);
 		previous = new Vector3f(0, 35, 0);
 		rotation = new Vector3f(0, 0, 0);
@@ -33,7 +35,7 @@ public class Player extends MovingPerson{
 		gravity = 0.625f;
 		jumpForce = 20.0f;
 
-		String[] sfxnoises = {"res/sfx/pistol.wav"};
+		String[] sfxnoises = {"res/sfx/pistol.wav","res/sfx/hit.wav"};
 		sfx.loadSongs(sfxnoises,"res/sfx/");
 
 		calcGroundHeight();
@@ -54,17 +56,7 @@ public class Player extends MovingPerson{
 		if(!flight)
 			verticalMovement(dt);
 //		/System.out.println(position);
-		ArrayList<Bullet> removeBullets = new ArrayList <>();
-		for(Bullet b : bullets){
-			b.move();
-			if(b.collides(map.getTexturedModelsArray(), enemies, this)){
-				removeBullets.add(b);
-			}
-			//System.out.println(b.getPosition());
-		}
-		for(Bullet collidedBullets : removeBullets){
-			bullets.remove(collidedBullets);
-		}
+
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
 			position.set(0.0f, 35.0f, 0.0f);
@@ -121,9 +113,18 @@ public class Player extends MovingPerson{
 			previous.setX(position.getX());
 			position.x += Math.sin(Math.toRadians(rotation.y + 90)) * speed;
 			if (collides()) position.x = previous.x;
+			if(collides() && Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
+				//position.x = previous.x;
+				System.out.println(1);
+				position.y = previous.y;
+				dy = 0;
+				wallride = true;
+			}else {
+				wallride = false;
+			}
 			previous.setZ(position.getZ());
 			position.z -= Math.cos(Math.toRadians(rotation.y + 90)) * speed;
-			if (collides()) position.z = previous.z;
+			if (collides() && !wallride) position.z = previous.z;
 			moved = true;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
@@ -169,5 +170,8 @@ public class Player extends MovingPerson{
 		flight = !flight;
 	}
 
-
+	public static void decreaseHealth(){
+		health--;
+		sfx.playFile(1);
+	}
 }

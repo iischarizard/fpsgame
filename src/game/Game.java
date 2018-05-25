@@ -8,6 +8,7 @@ import static org.lwjgl.opengl.GL11.glEnable;
 
 import java.util.ArrayList;
 
+import game.entity.Bullet;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -38,7 +39,7 @@ public class Game implements GameBase {
 
 	private ArrayList<TexturedModel> mapObjs;
 	private ArrayList<Enemy> enemies = new ArrayList<>();
-	
+	private ArrayList<Bullet> bullets = new ArrayList <>();
 	private NavigationMesh navMesh;
 	private Grid grid;
 	private int wave = 1;
@@ -47,7 +48,7 @@ public class Game implements GameBase {
 		renderMaster = new RenderMaster();
 		loader = new Loader();
 		map = loader.loadMap("school");
-		player = new Player(map);
+		player = new Player(map,bullets);
 		String[] s = fileReader.getFileNames("res/songs/");
 		radio.loadSongs(s,"res/songs/");
 
@@ -56,7 +57,7 @@ public class Game implements GameBase {
 		enemies.add(new Enemy(new Vector3f(77.41691f, 12.207812f, -50.254097f),loader,map, grid));
 
 	}
-	
+
 	public void startGameLogic(){
 
 
@@ -76,14 +77,25 @@ public class Game implements GameBase {
 	public void update(float dt) {
 		if(StateManager.gameState==StateManager.GameState.GAME){
 			player.update(dt, enemies);
-	
+			ArrayList<Bullet> removeBullets = new ArrayList <>();
+			for(Bullet b : bullets){
+				b.move();
+				if(b.collides(map.getTexturedModelsArray(), enemies)){
+					removeBullets.add(b);
+				}
+				//System.out.println(b.getPosition());
+			}
+			for(Bullet collidedBullets : removeBullets){
+				bullets.remove(collidedBullets);
+			}
+
 			ArrayList<Enemy> removeEnemy = new ArrayList<Enemy>();
 			for(Enemy e: enemies){
 				if(e.isHit()){
 					removeEnemy.add(e);
 					continue;
 				}
-				e.update(dt,player.getPosition(), mapObjs);
+				e.update(dt,player.getPosition(), mapObjs,player);
 			}
 			for(Enemy e: removeEnemy){
 				enemies.remove(e);
@@ -104,7 +116,7 @@ public class Game implements GameBase {
 						radio.playFile(1);
 						radioStarted = true;
 					}
-					if (Keyboard.isKeyDown(Keyboard.KEY_BACKSLASH)) 
+					if (Keyboard.isKeyDown(Keyboard.KEY_BACKSLASH))
 						player.toggleFlight();
 					if (Keyboard.isKeyDown(Keyboard.KEY_PERIOD)){
 						System.out.println(player.getPosition());
@@ -112,7 +124,7 @@ public class Game implements GameBase {
 				}
 			}
 			SoundStore.get().poll(0);
-	
+
 			ArrayList<TexturedModel> temp = new ArrayList<TexturedModel>();
 			for (TexturedModel model : mapObjs){
 				if(model.getHit()){
@@ -141,6 +153,9 @@ public class Game implements GameBase {
 		}
 		for(Enemy e : enemies){
 			renderMaster.processEntity(e.getModel());
+		}
+		for(Bullet b : bullets){
+			renderMaster.processEntity(b.getModel());
 		}
 		renderMaster.render(player);
 
