@@ -1,5 +1,6 @@
 package game;
 
+import game.entity.Player;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -18,7 +19,8 @@ public class Main {
 			e.printStackTrace();
 		}
 
-
+		
+		
 		Game game = new Game();
 		game.initGL();
 		game.init();
@@ -39,7 +41,9 @@ public class Main {
 
 			game.update(delta);
 			game.render();
-
+			if(Player.health == 0){
+				game.stop();
+			}
 		}
 		game.cleanUp();
 	}

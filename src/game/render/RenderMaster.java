@@ -102,7 +102,7 @@ public class RenderMaster {
 		Matrix4f.rotate((float) Math.toRadians(camera.getRotation().getY()), new Vector3f(0, 1, 0), viewMatrix, viewMatrix);
 		Matrix4f.rotate((float) Math.toRadians(camera.getRotation().getZ()), new Vector3f(0, 0, 1), viewMatrix, viewMatrix);
 		Vector3f pos = camera.getPosition();
-		Vector3f negPos = new Vector3f(-pos.x - camera.getWidth() / 2f, -pos.y - camera.getHeight(), -pos.z - camera.getLenght() / 2f);
+		Vector3f negPos = new Vector3f(-pos.x - camera.getWidth() / 2f, -pos.y - camera.getHeight(), -pos.z - camera.getLength() / 2f);
 		Matrix4f.translate(negPos, viewMatrix, viewMatrix);
 	}
 

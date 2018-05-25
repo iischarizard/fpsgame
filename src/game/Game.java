@@ -1,23 +1,30 @@
 package game;
 
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glEnable;
+
 import java.util.ArrayList;
 
-import game.data.FolderReader;
-import game.entity.Enemy;
+import game.entity.Bullet;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.openal.SoundStore;
 
+import game.data.FolderReader;
 import game.data.Loader;
 import game.data.Radio;
+import game.entity.Enemy;
 import game.entity.Player;
 import game.map.Map;
 import game.model.TexturedModel;
 import game.render.RenderMaster;
-
-import static org.lwjgl.opengl.GL11.*;
+import pathfinding.Grid;
+import pathing.NavigationMesh;
 
 
 public class Game implements GameBase {
@@ -32,18 +39,22 @@ public class Game implements GameBase {
 
 	private ArrayList<TexturedModel> mapObjs;
 	private ArrayList<Enemy> enemies = new ArrayList<>();
-
+	private ArrayList<Bullet> bullets = new ArrayList <>();
+	private NavigationMesh navMesh;
+	private Grid grid;
+	private int wave = 1;
 
 	public void init() {
 		renderMaster = new RenderMaster();
 		loader = new Loader();
-		map = loader.loadMap("map01");
-		player = new Player(map);
+		map = loader.loadMap("school");
+		player = new Player(map,bullets);
 		String[] s = fileReader.getFileNames("res/songs/");
 		radio.loadSongs(s,"res/songs/");
 
 		mapObjs = map.getTexturedModelsArray();
-		enemies.add(new Enemy(new Vector3f(0, 40, 0),loader,map));
+		grid = new Grid();
+		enemies.add(new Enemy(new Vector3f(77.41691f, 12.207812f, -50.254097f),loader,map, grid));
 
 	}
 
@@ -62,40 +73,71 @@ public class Game implements GameBase {
 		glEnable(GL_BLEND);
 		GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
-
+	//12.207812
 	public void update(float dt) {
-		player.update(dt);
-
-
-		for(Enemy e: enemies){
-			e.update(dt,player.getPosition());
-		}
-
-		while(Keyboard.next()) {
-			if (Keyboard.getEventKeyState()) {
-				if (Keyboard.isKeyDown(Keyboard.KEY_MINUS)) {
-					//System.out.println(1);
-					radio.playFile(-1);
+		if(StateManager.gameState==StateManager.GameState.GAME){
+			player.update(dt, enemies);
+			ArrayList<Bullet> removeBullets = new ArrayList <>();
+			for(Bullet b : bullets){
+				b.move();
+				if(b.collides(map.getTexturedModelsArray(), enemies)){
+					removeBullets.add(b);
 				}
-				if (Keyboard.isKeyDown(Keyboard.KEY_EQUALS)) {
-					radio.playFile(1);
-					radioStarted = true;
+				//System.out.println(b.getPosition());
+			}
+			for(Bullet collidedBullets : removeBullets){
+				bullets.remove(collidedBullets);
+			}
+
+			ArrayList<Enemy> removeEnemy = new ArrayList<Enemy>();
+			for(Enemy e: enemies){
+				if(e.isHit()){
+					removeEnemy.add(e);
+					continue;
+				}
+				e.update(dt,player.getPosition(), mapObjs,player);
+			}
+			for(Enemy e: removeEnemy){
+				enemies.remove(e);
+			}
+			if(enemies.size()==0){
+				wave++;
+				for(int i = 0; i < wave; i++){
+					enemies.add(new Enemy(grid.getRandomNode().getPosition(),loader,map, grid));
 				}
 			}
-		}
-		SoundStore.get().poll(0);
-
-		ArrayList<TexturedModel> temp = new ArrayList<TexturedModel>();
-		for (TexturedModel model : mapObjs){
-			if(model.getHit()){
-				temp.add(model);
+			while(Keyboard.next()) {
+				if (Keyboard.getEventKeyState()) {
+					if (Keyboard.isKeyDown(Keyboard.KEY_MINUS)) {
+						//System.out.println(1);
+						radio.playFile(-1);
+					}
+					if (Keyboard.isKeyDown(Keyboard.KEY_EQUALS)) {
+						radio.playFile(1);
+						radioStarted = true;
+					}
+					if (Keyboard.isKeyDown(Keyboard.KEY_BACKSLASH))
+						player.toggleFlight();
+					if (Keyboard.isKeyDown(Keyboard.KEY_PERIOD)){
+						System.out.println(player.getPosition());
+					}
+				}
 			}
+			SoundStore.get().poll(0);
+
+			ArrayList<TexturedModel> temp = new ArrayList<TexturedModel>();
+			for (TexturedModel model : mapObjs){
+				if(model.getHit()){
+					temp.add(model);
+				}
+			}
+			for(TexturedModel model: temp){
+				mapObjs.remove(model);
+				player.calcGroundHeight();
+			}
+			if(!radio.isSongPlaying() && radioStarted)
+				radio.playFile(1);
 		}
-		for(TexturedModel model: temp){
-			mapObjs.remove(model);
-		}
-		if(!radio.isSongPlaying() && radioStarted)
-			radio.playFile(1);
 	}
 	public boolean isRunning() {
 		return running;
@@ -111,6 +153,9 @@ public class Game implements GameBase {
 		}
 		for(Enemy e : enemies){
 			renderMaster.processEntity(e.getModel());
+		}
+		for(Bullet b : bullets){
+			renderMaster.processEntity(b.getModel());
 		}
 		renderMaster.render(player);
 

@@ -15,6 +15,7 @@ public abstract class MovingPerson {
     public Vector3f previous;
     public Vector3f rotation;
     public float dy, groundHeight;
+	private boolean hit;
 
     // Bounds
     public float width = 2;
@@ -36,6 +37,7 @@ public abstract class MovingPerson {
 
     public MovingPerson(Map map){
         this.map = map;
+		hit = false;
     }
 
     public void moving(float dt){};
@@ -98,7 +100,12 @@ public abstract class MovingPerson {
         return position;
     }
 
-    public Vector3f getRotation() {
+    
+    public void setRotation(Vector3f rotation) {
+		this.rotation = rotation;
+	}
+
+	public Vector3f getRotation() {
         return rotation;
     }
 
@@ -110,7 +117,14 @@ public abstract class MovingPerson {
         return height;
     }
 
-    public float getLenght() {
+    public float getLength() {
         return length;
     }
+	public boolean isHit() {
+		return hit;
+	}
+
+	public void setHit(boolean hit) {
+		this.hit = hit;
+	}
 }

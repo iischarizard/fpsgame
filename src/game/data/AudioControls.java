@@ -24,7 +24,7 @@ public abstract class AudioControls {
             e.printStackTrace();
         }
     }
-    public void playFile(){
+    public static void playFile(){
 
     }
 
