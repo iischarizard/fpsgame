@@ -18,7 +18,8 @@ public class Main {
 			e.printStackTrace();
 		}
 
-
+		
+		
 		Game game = new Game();
 		game.initGL();
 		game.init();

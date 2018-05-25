@@ -24,6 +24,7 @@ public class Entity {
 
 	public void update(float dt){};
 	
+
 	public Vector3f getPosition() {
 		return position;
 	}
